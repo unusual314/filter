@@ -3,19 +3,39 @@ const axios = require('axios');
 const app = express();
 const defaultParses = [
   {
-    "name": "Web播放",
+    "name": "虾米解析",
     "type": 3,
-    "url": "Web"
+    "url": "https://jx.xmflv.com/?url="
   },
   {
-    "name": "Json播放",
+    "name": "虾米解析2",
     "type": 3,
-    "url": "Json"
+    "url": "https://jx.xmflv.cc/?url="
   },
   {
-    "name": "M3U8播放",
+    "name": "BD解析",
     "type": 3,
-    "url": "M3U8"
+    "url": "https://bd.jx.cn/?url="
+  },
+  {
+    "name": "钱奇解析",
+    "type": 3,
+    "url": "https://api.qianqi.net/vip/?url="
+  },
+  {
+    "name": "HLS解析",
+    "type": 3,
+    "url": "https://jx.hls.one/?url="
+  },
+  {
+    "name": "夜幕解析",
+    "type": 3,
+    "url": "https://www.yemu.xyz/?url="
+  },
+  {
+    "name": "泡云解析",
+    "type": 3,
+    "url": "https://www.pouyun.com/?url="
   }
 ];
 app.get('/pi', async (req, res) => {
@@ -23,9 +43,7 @@ app.get('/pi', async (req, res) => {
   let data = response.data;
   if (typeof data === 'string') data = JSON.parse(data);
     
-  if (!data.parses || data.parses.length === 0) {
-    data.parses = defaultParses;
-  }
+  data.parses = defaultParses;
     
   if (data.sites) {
     data.sites = data.sites.filter(item => !item.name.includes('🔞'));
@@ -38,9 +56,7 @@ app.get('/bi', async (req, res) => {
   let data = response.data;
   if (typeof data === 'string') data = JSON.parse(data);
     
-  if (!data.parses || data.parses.length === 0) {
-    data.parses = defaultParses;
-  }
+  data.parses = defaultParses;
     
   if (data.sites) {
     data.sites = data.sites.filter(item => !item.name.includes('🔞'));
