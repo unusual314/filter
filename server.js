@@ -4,26 +4,27 @@ const app = express();
 app.get('/pi', async (req, res) => {
   const response = await axios.get('https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true'); 
   let data = response.data;
-  // 用正则表达式过滤包含🔞的整个对象
   if (typeof data === 'string') {
-    data = data.replace(/\{[^}]*"name"[^}]*"🔞[^}]*\}/g, '');
-    data = data.replace(/,\s*,/g, ',');
-    data = data.replace(/\[\s*,/g, '[');
-    data = data.replace(/,\s*\]/g, ']');
+    data = JSON.parse(data);
+  }
+  // 只过滤sites中包含🔞的项目
+  if (data.sites && Array.isArray(data.sites)) {  
+    data.sites = data.sites.filter(item => !item.name || !item.name.includes('🔞'));
   }
   res.set('Content-Type', 'application/json');
-  res.send(data);
+  res.json(data);
 });
 app.get('/bi', async (req, res) => {
   const response = await axios.get('https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true'); 
   let data = response.data;
-  // 用正则表达式过滤包含🔞的整个对象
   if (typeof data === 'string') {
-    data = data.replace(/\{[^}]*"name"[^}]*"🔞[^}]*\}/g, '');
-    data = data.replace(/,\s*,/g, ',');
-    data = data.replace(/\[\s*,/g, '[');
-    data = data.replace(/,\s*\]/g, ']');
+    data = JSON.parse(data);
+  }    
+  // 只过滤sites中包含🔞的项目
+  if (data.sites && Array.isArray(data.sites)) {
+    data.sites = data.sites.filter(item => !item.name || !item.name.includes('🔞'));
   }
-  res.send(data);
+  res.set('Content-Type', 'application/json');
+  res.json(data);
 });
 app.listen(8080, '0.0.0.0');
