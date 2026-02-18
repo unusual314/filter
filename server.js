@@ -8,16 +8,41 @@ const xiamiFallbackParsers = [
     "url": "https://jx.xmflv.com/?url="
   },
   {
-    "name": "虾米解析2",
+    "name": "Player-JY",
     "type": 3,
-    "url": "https://jx.xmflv.cc/?url="
+    "url": "https://jx.playerjy.com/?url="
+  },
+  {
+    "name": "泡云解析",
+    "type": 3,
+    "url": "https://www.pouyun.com/?url="
+  },
+  {
+    "name": "Free解析",
+    "type": 3,
+    "url": "https://free.maccms.xyz/?url="
+  },
+  {
+    "name": "CK播放器",
+    "type": 3,
+    "url": "https://www.ckplayer.vip/jiexi/?url="
+  },
+  {
+    "name": "M3U8TV",
+    "type": 3,
+    "url": "https://jx.m3u8.tv/jiexi/?url="
+  },
+  {
+    "name": "PlayM3U8",
+    "type": 3,
+    "url": "https://www.playm3u8.cn/jiexi.php?url="
   }
 ];
 app.get('/pi', async (req, res) => {
   const response = await axios.get('https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true'); 
   let data = response.data;
-  if (typeof data === 'string') data = JSON.parse(data);
-  // 添加虾米解析器作为备用  
+  if (typeof data === 'string') data = JSON.parse(data);  
+  // 添加解析器作为备用
   if (data.parses) {
     data.parses = [...xiamiFallbackParsers, ...data.parses];
   } else {
@@ -32,7 +57,7 @@ app.get('/bi', async (req, res) => {
   const response = await axios.get('https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true'); 
   let data = response.data;
   if (typeof data === 'string') data = JSON.parse(data);
-  // 添加虾米解析器作为备用
+  // 添加解析器作为备用
   if (data.parses) {
     data.parses = [...xiamiFallbackParsers, ...data.parses];
   } else {
