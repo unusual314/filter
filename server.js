@@ -1,7 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const app = express();
-const defaultParses = [
+const xiamiFallbackParsers = [
   {
     "name": "虾米解析",
     "type": 3,
@@ -17,17 +17,27 @@ app.get('/pi', async (req, res) => {
   const response = await axios.get('https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true'); 
   let data = response.data;
   if (typeof data === 'string') data = JSON.parse(data);
-  data.parses = defaultParses;
+  // 添加虾米解析器作为备用  
+  if (data.parses) {
+    data.parses = [...xiamiFallbackParsers, ...data.parses];
+  } else {
+    data.parses = xiamiFallbackParsers;
+  }
   if (data.sites) {
     data.sites = data.sites.filter(item => !item.name.includes('🔞'));
   }
   res.json(data);
 });
 app.get('/bi', async (req, res) => {
-  const response = await axios.get('https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true');
+  const response = await axios.get('https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true'); 
   let data = response.data;
   if (typeof data === 'string') data = JSON.parse(data);
-  data.parses = defaultParses;
+  // 添加虾米解析器作为备用
+  if (data.parses) {
+    data.parses = [...xiamiFallbackParsers, ...data.parses];
+  } else {
+    data.parses = xiamiFallbackParsers;
+  }
   if (data.sites) {
     data.sites = data.sites.filter(item => !item.name.includes('🔞'));
   }
