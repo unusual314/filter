@@ -51,7 +51,7 @@ app.get('/pi', async (req, res) => {
       data = JSON.parse(data);
     }
     // 检查所有可能的字段
-    const sitesField = data.sites || data.list || data.data || data.items || [];
+    const sitesField = (data.data && data.data.sites) || data.sites || data.list || data.items || [];
     console.log('Sites field found:', sitesField.length, 'items');
     if (Array.isArray(sitesField) && sitesField.length > 0) {
       // 过滤掉包含 🔞 的站点
