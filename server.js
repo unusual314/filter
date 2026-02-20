@@ -39,33 +39,47 @@ const xiamiFallbackParsers = [
   }
 ];
 app.get('/pi', async (req, res) => {
-  const response = await axios.get('https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true'); 
-  let data = response.data;
-  if (typeof data === 'string') data = JSON.parse(data);
-  // 把虾米解析器注入到每个网站的ext字段
-  if (data.sites) {
-    data.sites = data.sites.filter(item => !item.name.includes('🔞'));
-    data.sites.forEach(site => {
-      if (!site.ext) {
-        site.ext = JSON.stringify(xiamiFallbackParsers);
-      }
+  try {
+    const response = await axios.get('https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true', { 
+      timeout: 15000
     });
+    let data = response.data;
+    if (typeof data === 'string') data = JSON.parse(data);
+    if (data.sites) {
+      data.sites = data.sites.filter(item => !item.name.includes('🔞'));
+      data.sites.forEach(site => {
+        if (!site.ext) {
+          site.ext = JSON.stringify(xiamiFallbackParsers);
+        }
+      });
+    }
+    res.json(data);
+  } catch (error) {
+    console.error('Error in /pi:', error.message);
+    res.status(500).json({ error: 'Failed to fetch data' });
   }
-  res.json(data);
 });
 app.get('/bi', async (req, res) => {
-  const response = await axios.get('https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true');
-  let data = response.data;
-  if (typeof data === 'string') data = JSON.parse(data);
-  // 把虾米解析器注入到每个网站的ext字段
-  if (data.sites) {
-    data.sites = data.sites.filter(item => !item.name.includes('🔞'));
-    data.sites.forEach(site => {
-      if (!site.ext) {
-        site.ext = JSON.stringify(xiamiFallbackParsers);
-      }
+  try {
+    const response = await axios.get('https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true', {
+      timeout: 15000
     });
+    let data = response.data;
+    if (typeof data === 'string') data = JSON.parse(data);
+    if (data.sites) {
+      data.sites = data.sites.filter(item => !item.name.includes('🔞'));
+      data.sites.forEach(site => {
+        if (!site.ext) {
+          site.ext = JSON.stringify(xiamiFallbackParsers);
+        }
+      });
+    }
+    res.json(data);
+  } catch (error) {
+    console.error('Error in /bi:', error.message);
+    res.status(500).json({ error: 'Failed to fetch data' });
   }
-  res.json(data);
 });
-app.listen(8080, '0.0.0.0');
+app.listen(8080, '0.0.0.0', () => {
+  console.log('Server running on port 8080');
+});
