@@ -6,11 +6,11 @@ app.get('/pi', async (req, res) => {
   try {
     const response = await axios.get('https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true'); 
     let data = response.data;
-    if (typeof data === 'string') { 
+    if (typeof data === 'string') {
       data = JSON.parse(data);
     }
-    if (data.list && Array.isArray(data.list)) {
-      data.list = data.list.filter(item => item.name && !item.name.includes('🔞'));
+    if (data.data && data.data.sites && Array.isArray(data.data.sites)) {
+      data.data.sites = data.data.sites.filter(item => item.name && !item.name.includes('🔞'));
     }
     res.set('Content-Type', 'application/json; charset=utf-8');
     res.json(data);
@@ -25,8 +25,8 @@ app.get('/bi', async (req, res) => {
     if (typeof data === 'string') {
       data = JSON.parse(data);
     }
-    if (data.list && Array.isArray(data.list)) {
-      data.list = data.list.filter(item => item.name && !item.name.includes('🔞'));
+    if (data.data && data.data.sites && Array.isArray(data.data.sites)) {
+      data.data.sites = data.data.sites.filter(item => item.name && !item.name.includes('🔞'));
     }
     res.set('Content-Type', 'application/json; charset=utf-8');
     res.json(data);
