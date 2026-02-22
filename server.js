@@ -38,34 +38,39 @@ const xiamiFallbackParsers = [
     "url": "https://www.playm3u8.cn/jiexi.php?url="
   }
 ];
-app.get('/pi', async (req, res) => {
-  const response = await axios.get('https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true'); 
-  let data = response.data;
-  if (typeof data === 'string') data = JSON.parse(data);
-  // 把虾米解析器注入到每个网站的ext字段
-  if (data.sites) {
-    data.sites = data.sites.filter(item => !item.name.includes('🔞'));
-    data.sites.forEach(site => {
-      if (!site.ext) {
-        site.ext = JSON.stringify(xiamiFallbackParsers);
-      }
-    });
+// 从环境变量读取数据源地址
+const PRIMARY_SOURCE = process.env.PRIMARY_SOURCE || 'https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true';
+const SECONDARY_SOURCE = process.env.SECONDARY_SOURCE || PRIMARY_SOURCE;
+// 通用处理函数
+async function fetchAndProcessData(sourceUrl, res) {
+  try {
+    const response = await axios.get(sourceUrl);
+    let data = response.data;
+    if (typeof data === 'string') data = JSON.parse(data);
+      
+    if (data.sites) {
+      data.sites = data.sites.filter(item => !item.name.includes('🔞'));
+      data.sites.forEach(site => {
+        if (!site.ext) {
+          site.ext = JSON.stringify(xiamiFallbackParsers);
+        }
+      });
+    }
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch data' });
   }
-  res.json(data);
+}
+// 根路由 - 用于 314.zztv.xyz 的请求（不带后缀)
+app.get('/', async (req, res) => {
+  await fetchAndProcessData(PRIMARY_SOURCE, res);
 });
+// /pi 路由 - 保留原有功能
+app.get('/pi', async (req, res) => {
+  await fetchAndProcessData(PRIMARY_SOURCE, res);
+});
+// /bi 路由 - 保留原有功能
 app.get('/bi', async (req, res) => {
-  const response = await axios.get('https://www.zztv.xyz/api/tvbox/subscribe?token=31415926&adFilter=true');
-  let data = response.data;
-  if (typeof data === 'string') data = JSON.parse(data);
-  // 把虾米解析器注入到每个网站的ext字段
-  if (data.sites) {
-    data.sites = data.sites.filter(item => !item.name.includes('🔞'));
-    data.sites.forEach(site => {
-      if (!site.ext) {
-        site.ext = JSON.stringify(xiamiFallbackParsers);
-      }
-    });
-  }
-  res.json(data);
+  await fetchAndProcessData(SECONDARY_SOURCE, res);
 });
 app.listen(8080, '0.0.0.0');
